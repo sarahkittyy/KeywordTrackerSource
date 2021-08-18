@@ -1,0 +1,3 @@
+[submodule "release/KeywordTracker"]
+	path = release/KeywordTracker
+	url = git@github.com:sarahkittyy/KeywordTracker.git
