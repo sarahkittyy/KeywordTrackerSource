@@ -221,10 +221,12 @@ module.exports = (Plugin, Library) => {
 
     // build the inbox panel placed directly after the pinned messages button
     buildInboxPanel() {
-      let pinned = document.querySelector('div[aria-label*="Pinned Messages"]');
+      let pinned = document.querySelector('div[aria-label*="Pinned Messages" i]');
+      Logger.info(pinned);
       if (!pinned) {
         return;
       }
+      console.log(pinned);
 
       let inbox = pinned.cloneNode(true);
       inbox.setAttribute('is-keyword-tracker-inbox', true);

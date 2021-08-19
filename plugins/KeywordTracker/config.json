@@ -7,7 +7,7 @@
       "github_username": "sarahkittyy",
       "twitter_username": "snuggleskittyy"
     }],
-    "version": "1.2.1",
+    "version": "1.2.2",
     "description": "Be notified when a message matches a keyword :)",
     "github": "https://github.com/sarahkittyy/KeywordTracker",
     "github_raw": "https://raw.githubusercontent.com/sarahkittyy/KeywordTracker/main/KeywordTracker.plugin.js",
@@ -92,6 +92,12 @@
       "title": "v1.2.1",
       "items": [
         "Hopefully fixes the issue of the keyword inbox button not appearing on some clients."
+      ]
+    },
+    {
+      "title": "v1.2.2",
+      "items": [
+        "Actually, for realsies, fixes the issue (Thanks Meduxa)"
       ]
     }
   ],
