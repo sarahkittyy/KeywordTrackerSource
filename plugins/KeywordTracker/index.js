@@ -37,18 +37,13 @@ module.exports = (Plugin, Library) => {
       PluginUtilities.addStyle(this.getName(), inboxCss);
 
       let dispatchModule = BdApi.findModuleByProps('dispatch');
-      this.cancelPatches.push(BdApi.monkeyPatch(dispatchModule, 'dispatch', { after: this.handleMessage.bind(this) }));
+      BdApi.Patcher.after(this.getName(), dispatchModule, 'dispatch', this.handleMessage.bind(this));
 
-      //let navigationModule = Modules.NavigationUtils;
-      //this.cancelPatches.push(BdApi.monkeyPatch(navigationModule, 'transitionTo', { after: () => {
-        //this.buildInboxPanel();
-      //}}));
       const TitleBar = BdApi.findModuleByProps('Title', 'default', 'Caret');
-      this.cancelPatches.push(BdApi.monkeyPatch(TitleBar, "default", { before: ({ methodArguments: args }) => {
-        let props = args[0];
+      BdApi.Patcher.before(this.getName(), TitleBar, "default", (_, [props], ret) => {
         if (props.toolbar.type === 'function') return;
-        props.toolbar.props.children.splice(1, 0, this.buildInboxPanel());
-      } }) );
+        props.toolbar.props.children[0].splice(Math.max(3, props.toolbar.props.children[0].length - 1), 0, this.buildInboxPanel());
+      });
 
       this.userId = BdApi.findModuleByProps('getId').getId();
     }
@@ -56,15 +51,13 @@ module.exports = (Plugin, Library) => {
     onStop() {
       this.saveSettings();
 
-      Patcher.unpatchAll(this.getName());
-      this.cancelPatches.forEach(p => p());
+      BdApi.Patcher.unpatchAll(this.getName());
       PluginUtilities.removeStyle(this.getName());
     }
 
-    handleMessage(data) {
+    handleMessage(_, args) {
       try {
         const { guilds } = DiscordAPI;
-        const { methodArguments: args } = data;
         let event = args[0];
         if (event.type !== 'MESSAGE_CREATE') return;
         // get message data
