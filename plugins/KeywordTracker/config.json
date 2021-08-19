@@ -7,7 +7,7 @@
       "github_username": "sarahkittyy",
       "twitter_username": "snuggleskittyy"
     }],
-    "version": "1.1.1",
+    "version": "1.2.0",
     "description": "Be notified when a message matches a keyword :)",
     "github": "https://github.com/sarahkittyy/KeywordTracker",
     "github_raw": "https://raw.githubusercontent.com/sarahkittyy/KeywordTracker/main/KeywordTracker.plugin.js",
@@ -79,6 +79,13 @@
       "items": [
         "Added user whitelist to receive all messages from a specific user. (Thank you @infernix!)",
         "Updated README.md"
+      ]
+    },
+    {
+      "title": "v1.2.0",
+      "items": [
+        "Finally added an inbox, oh my god, why didn't I do this sooner.",
+        "You can find all recent missed matches from the last 60 days right next to the pinned messages button."
       ]
     }
   ],
