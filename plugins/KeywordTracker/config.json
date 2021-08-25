@@ -7,7 +7,7 @@
       "github_username": "sarahkittyy",
       "twitter_username": "snuggleskittyy"
     }],
-    "version": "1.2.2",
+    "version": "1.2.3",
     "description": "Be notified when a message matches a keyword :)",
     "github": "https://github.com/sarahkittyy/KeywordTracker",
     "github_raw": "https://raw.githubusercontent.com/sarahkittyy/KeywordTracker/main/KeywordTracker.plugin.js",
@@ -98,6 +98,12 @@
       "title": "v1.2.2",
       "items": [
         "Actually, for realsies, fixes the issue (Thanks Meduxa)"
+      ]
+    },
+    {
+      "title": "v1.2.3",
+      "items": [
+        "Fixed crashing issue related to jumping to a matched keyword."
       ]
     }
   ],

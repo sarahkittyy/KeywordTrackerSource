@@ -228,6 +228,8 @@ module.exports = (Plugin, Library) => {
       }
       console.log(pinned);
 
+      const ModalCloseEvent = new Event('modalclose');
+
       let inbox = pinned.cloneNode(true);
       inbox.setAttribute('is-keyword-tracker-inbox', true);
       inbox.setAttribute('aria-label', 'Keyword Matches');
@@ -243,7 +245,7 @@ module.exports = (Plugin, Library) => {
 
       // actual modal window on-click
       const openModal = () => {
-        Modals.showModal('Keyword Matches', this.renderInbox(), {
+        let modalKey = Modals.showModal('Keyword Matches', this.renderInbox(() => { Modules.ModalActions.closeModal(modalKey); }), {
           confirmText: 'Close',
           cancelText: 'Mark as Read',
           onCancel: () => {
@@ -254,6 +256,11 @@ module.exports = (Plugin, Library) => {
             this.saveSettings();
           }
         });
+        const closeModal = () => {
+          Modules.ModalActions.closeModal(modalKey);
+        };
+        inbox.removeEventListener('modalclose', closeModal);
+        inbox.addEventListener('modalclose', closeModal);
       };
       inbox.removeEventListener('click', openModal);
       inbox.addEventListener('click', openModal);
@@ -262,7 +269,7 @@ module.exports = (Plugin, Library) => {
     }
 
     // render all messages from settings.unreadMatches
-    renderInbox() {
+    renderInbox(closeModal) {
       let root = document.createElement('div');
       root.className = 'kt-inbox-container';
 
@@ -324,13 +331,7 @@ module.exports = (Plugin, Library) => {
           jump.addEventListener('click', () => {
             delete this.settings.unreadMatches[msg.id];
             this.saveSettings();
-            let modal = document.querySelector('div[class*="layerContainer"] > div[class*="backdrop"][class*="withLayer"]');
-            if(modal) {
-              let parent = modal.parentNode;
-              while (parent.hasChildNodes()) {
-                  parent.removeChild(parent.lastChild);
-              }
-            }
+            closeModal();
             Modules.NavigationUtils.transitionTo(
               `/channels/${msg.guild_id}/${msg.channel_id}/${msg.id}`,
               undefined,
