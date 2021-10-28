@@ -7,7 +7,7 @@
       "github_username": "sarahkittyy",
       "twitter_username": "snuggleskittyy"
     }],
-    "version": "1.2.3",
+    "version": "1.2.4",
     "description": "Be notified when a message matches a keyword :)",
     "github": "https://github.com/sarahkittyy/KeywordTracker",
     "github_raw": "https://raw.githubusercontent.com/sarahkittyy/KeywordTracker/main/KeywordTracker.plugin.js",
@@ -17,50 +17,43 @@
     "updateUrl": "https://raw.githubusercontent.com/sarahkittyy/KeywordTracker/main/KeywordTracker.plugin.js"
   },
   "changelog": [
-    { "title": "Release", "items": ["Initial release."] },
     {
-      "title": "v1.0.1",
+      "title": "v1.2.4",
       "items": [
-        "Removed changes to global RegExp.escape",
-        "Updated meta info"
+        "Fixed order of changelog.",
+        "Fixed the entire plugin, lol :)"
       ]
     },
     {
-      "title": "v1.0.2",
+      "title": "v1.2.3",
       "items": [
-        "Fixed dm channels causing console errors",
-        "Fixed update url"
+        "Fixed crashing issue related to jumping to a matched keyword."
       ]
     },
     {
-      "title": "v1.0.3",
+      "title": "v1.2.2",
       "items": [
-        "Fixed typo in RegexEscape",
-        "Changed notification icon to sender's profile picture"
+        "Actually, for realsies, fixes the issue (Thanks Meduxa)"
       ]
     },
     {
-      "title": "v1.0.4",
+      "title": "v1.2.1",
       "items": [
-        "Set all channels to be enabled by default"
+        "Hopefully fixes the issue of the keyword inbox button not appearing on some clients."
       ]
     },
     {
-      "title": "v1.0.5",
+      "title": "v1.2.0",
       "items": [
-        "Fixed issue where notifications would not play a sound."
+        "Finally added an inbox, oh my god, why didn't I do this sooner.",
+        "You can find all recent missed matches from the last 60 days right next to the pinned messages button."
       ]
     },
     {
-      "title": "v1.0.6",
+      "title": "v1.1.1",
       "items": [
-        "Fixed version not showing up on BD website"
-      ]
-    },
-    {
-      "title": "v1.0.7",
-      "items": [
-        "Added internal check to update when guild is newly joined"
+        "Added user whitelist to receive all messages from a specific user. (Thank you @infernix!)",
+        "Updated README.md"
       ]
     },
     {
@@ -75,35 +68,54 @@
       ]
     },
     {
-      "title": "v1.1.1",
+      "title": "v1.0.7",
       "items": [
-        "Added user whitelist to receive all messages from a specific user. (Thank you @infernix!)",
-        "Updated README.md"
+        "Added internal check to update when guild is newly joined"
       ]
     },
     {
-      "title": "v1.2.0",
+      "title": "v1.0.6",
       "items": [
-        "Finally added an inbox, oh my god, why didn't I do this sooner.",
-        "You can find all recent missed matches from the last 60 days right next to the pinned messages button."
+        "Fixed version not showing up on BD website"
       ]
     },
     {
-      "title": "v1.2.1",
+      "title": "v1.0.5",
       "items": [
-        "Hopefully fixes the issue of the keyword inbox button not appearing on some clients."
+        "Fixed issue where notifications would not play a sound."
       ]
     },
     {
-      "title": "v1.2.2",
+      "title": "v1.0.4",
       "items": [
-        "Actually, for realsies, fixes the issue (Thanks Meduxa)"
+        "Set all channels to be enabled by default"
       ]
     },
     {
-      "title": "v1.2.3",
+      "title": "v1.0.3",
       "items": [
-        "Fixed crashing issue related to jumping to a matched keyword."
+        "Fixed typo in RegexEscape",
+        "Changed notification icon to sender's profile picture"
+      ]
+    },
+    {
+      "title": "v1.0.2",
+      "items": [
+        "Fixed dm channels causing console errors",
+        "Fixed update url"
+      ]
+    },
+    {
+      "title": "v1.0.1",
+      "items": [
+        "Removed changes to global RegExp.escape",
+        "Updated meta info"
+      ]
+    },
+    {
+      "title": "Release",
+      "items": [
+        "Initial release."
       ]
     }
   ],
