@@ -40,9 +40,10 @@ module.exports = (Plugin, Library) => {
       BdApi.Patcher.after(this.getName(), dispatchModule, 'dispatch', this.handleMessage.bind(this));
 
       const TitleBar = BdApi.findModuleByProps('Title', 'default', 'Caret');
+      this.inboxPanel = this.buildInboxPanel();
       BdApi.Patcher.before(this.getName(), TitleBar, "default", (_, [props], ret) => {
         if (props.toolbar.type === 'function') return;
-        props.toolbar.props.children[0].splice(Math.max(3, props.toolbar.props.children[0].length - 1), 0, this.buildInboxPanel());
+        props.toolbar.props.children[0].splice(Math.max(3, props.toolbar.props.children[0].length - 1), 0, this.inboxPanel);
       });
 
       this.userId = BdApi.findModuleByProps('getId').getId();
@@ -222,11 +223,9 @@ module.exports = (Plugin, Library) => {
     // build the inbox panel placed directly after the pinned messages button
     buildInboxPanel() {
       let pinned = document.querySelector('div[aria-label*="Pinned Messages" i]');
-      Logger.info(pinned);
       if (!pinned) {
         return;
       }
-      console.log(pinned);
 
       const ModalCloseEvent = new Event('modalclose');
 
