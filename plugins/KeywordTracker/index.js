@@ -40,9 +40,13 @@ module.exports = (Plugin, Library) => {
       BdApi.Patcher.after(this.getName(), dispatchModule, 'dispatch', this.handleMessage.bind(this));
 
       const TitleBar = BdApi.findModuleByProps('Title', 'default', 'Caret');
-      this.inboxPanel = this.buildInboxPanel();
+      this.inboxPanel = null;
       BdApi.Patcher.before(this.getName(), TitleBar, "default", (_, [props], ret) => {
         if (props.toolbar.type === 'function') return;
+        if (this.inboxPanel == null) {
+          this.inboxPanel = this.buildInboxPanel();
+        }
+        if (typeof props.toolbar.props.children[0].splice !== 'function') return;
         props.toolbar.props.children[0].splice(Math.max(3, props.toolbar.props.children[0].length - 1), 0, this.inboxPanel);
       });
 
