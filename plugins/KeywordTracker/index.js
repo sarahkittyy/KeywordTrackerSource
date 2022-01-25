@@ -107,7 +107,7 @@ module.exports = (Plugin, Library) => {
         let whitelistedUserFound = !this.settings.whitelistedUsers.every((userId) => {
           if (message.author.id === userId) {
             const guild = guilds.find(g => g.id === channel.guild_id);
-            this.pingWhitelistMatc861302597503418399h(message, channel, guild.name);
+            this.pingWhitelistMatch(message, channel, guild.name);
             return false; // stop searching
           }
           return true;
