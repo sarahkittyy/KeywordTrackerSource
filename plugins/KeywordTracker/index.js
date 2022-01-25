@@ -9,9 +9,9 @@ module.exports = (Plugin, Library) => {
     enabled: true,
     unreadMatches: {},
     notifications: true,
+    allowSelf: false,
   };
   const {
-    DiscordAPI,
     DOMTools,
     Patcher,
     Logger,
@@ -62,7 +62,7 @@ module.exports = (Plugin, Library) => {
 
     handleMessage(_, args) {
       try {
-        const { guilds } = DiscordAPI;
+        const guilds = Object.values(Modules.GuildStore.getGuilds());
         let event = args[0];
         if (event.type !== 'MESSAGE_CREATE') return;
         // get message data
@@ -74,13 +74,15 @@ module.exports = (Plugin, Library) => {
           message = Modules.MessageStore.getMessage(channel.id, message.id);
           if (!message || !message.author) return;
         }
-        if (message.author.id === this.userId) return;
+        if (this.settings.allowSelf === false && message.author.id === this.userId) return;
         // ignore ignored users
         if (this.settings.ignoredUsers.includes(message.author.id)) return;
         if (!message.content) return;
 
         // no dms!
         if (!channel.guild_id) return;
+
+        Logger.info('nya!');
 
         // add guild to settings if it does not exist
         if (this.settings.guilds[channel.guild_id] == null) {
@@ -105,7 +107,7 @@ module.exports = (Plugin, Library) => {
         let whitelistedUserFound = !this.settings.whitelistedUsers.every((userId) => {
           if (message.author.id === userId) {
             const guild = guilds.find(g => g.id === channel.guild_id);
-            this.pingWhitelistMatch(message, channel, guild.name);
+            this.pingWhitelistMatc861302597503418399h(message, channel, guild.name);
             return false; // stop searching
           }
           return true;
@@ -226,7 +228,7 @@ module.exports = (Plugin, Library) => {
 
     // build the inbox panel placed directly after the pinned messages button
     buildInboxPanel() {
-      let pinned = document.querySelector('div[aria-label*="Pinned Messages" i]');
+      let pinned = document.querySelector('div[class*="toolbar-3" i] > div:first-child');
       if (!pinned) {
         return;
       }
@@ -368,15 +370,17 @@ module.exports = (Plugin, Library) => {
     //TODO: god why
     buildSettings() {
       const { Textbox, SettingPanel, SettingGroup, Keybind, SettingField, /*Switch*/ } = Settings;
-      const { sortedGuilds, guilds: normGuilds } = DiscordAPI;
+      const guilds = Modules.SortedGuildStore.getSortedGuilds()
+                      .reduce((acc, v) => {
+                        return acc.concat(v.guilds);
+                      }, [])
+                      .map(g => {
+                        g.channels = Modules.GuildChannelsStore.getChannels(g.id).SELECTABLE.map(c => c.channel);
+                        Logger.info(g.channels);
+                        return g;
+                      });
       const { parseHTML } = DOMTools;
 
-      // sorted guilds doesn't have critical data, and the normal guild list isn't sorted.
-      const guilds = sortedGuilds.reduce((arr, gobj) => {
-        return arr.concat(gobj.discordObject.guilds.map(g => {
-          return normGuilds.find(v => v.id === g.id);
-        }));
-      }, []);
       // when the main guild switch is hit this event is fired, causing all channel switches to sync
       const GuildFlushEvent = new Event('guildflushevent');
 
@@ -452,7 +456,6 @@ module.exports = (Plugin, Library) => {
           this.settings.guilds[g.id] = {
             // set all channels to enabled by default
             channels: g.channels
-              .filter(c => c.type === 'GUILD_TEXT')
               .reduce((obj, c) => {
                 obj[c.id] = true;
                 return obj;
@@ -487,7 +490,6 @@ module.exports = (Plugin, Library) => {
         let channelLoader = () => {
           // for every channel...
           g.channels
-            .filter(c => c.type === 'GUILD_TEXT')
             .forEach((c, i) => {
               // ...add a switch
               let status = this.settings.guilds[g.id].channels[c.id];
@@ -532,8 +534,17 @@ module.exports = (Plugin, Library) => {
         this.settings.notifications = v;
         this.saveSettings();
       });
+
+      let selfPingSwitch = this.makeSwitch(this.settings.allowSelf, (v) => {
+        this.settings.allowSelf = v;
+        this.saveSettings();
+      });
+
       let notificationToggle = new SettingField('', 'Enable notification sounds', null, notificationSwitch, { noteOnTop: true });
       other.append(notificationToggle);
+
+      let selfPingToggle = new SettingField('', 'Enable own messages to trigger notifications.', null, selfPingSwitch, { noteOnTop: true });
+      other.append(selfPingToggle);
 
       let ignoreuseridstip = new SettingField('', 'Ignore users here. One user ID per line. (Right click name -> Copy ID). Be sure developer options are on.', null, document.createElement('div'));
       other.append(ignoreuseridstip);

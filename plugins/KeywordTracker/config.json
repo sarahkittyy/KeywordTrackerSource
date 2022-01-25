@@ -7,7 +7,7 @@
       "github_username": "sarahkittyy",
       "twitter_username": "snuggleskittyy"
     }],
-    "version": "1.2.6",
+    "version": "1.3.0",
     "description": "Be notified when a message matches a keyword :)",
     "github": "https://github.com/sarahkittyy/KeywordTracker",
     "github_raw": "https://raw.githubusercontent.com/sarahkittyy/KeywordTracker/main/KeywordTracker.plugin.js",
@@ -17,6 +17,14 @@
     "updateUrl": "https://raw.githubusercontent.com/sarahkittyy/KeywordTracker/main/KeywordTracker.plugin.js"
   },
   "changelog": [
+    {
+      "title": "v1.3.0",
+      "items": [
+        "Fixed issues caused by ZLib's update.",
+        "Added toggle to let your own messages trigger notifications. Good for testing :)",
+        "Inbox should now show up on languages that are not english."
+      ]
+    },
     {
       "title": "v1.2.6",
       "items": [
