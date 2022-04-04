@@ -141,7 +141,6 @@ module.exports = (Plugin, Library) => {
     }
 
     sendMatchNotification(thumbnail, title, text, redirect, message) {
-			console.log(Modules.NotificationModule.showNotification);
       Modules.NotificationModule.showNotification(
         thumbnail,
         title,
@@ -152,7 +151,6 @@ module.exports = (Plugin, Library) => {
 				{
 					sound: this.settings.notifications ? 'message1' : null,
           onClick: () => {
-						console.log('on click called!');
             delete this.settings.unreadMatches[message.id];
             this.saveSettings();
             Modules.NavigationUtils.transitionTo(
