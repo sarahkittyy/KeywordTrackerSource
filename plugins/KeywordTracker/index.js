@@ -8,6 +8,7 @@ module.exports = (Plugin, Library) => {
     guilds: {},
     enabled: true,
     unreadMatches: {},
+    allNotifications: true,					   
     notifications: true,
     allowSelf: false,
   };
@@ -165,13 +166,15 @@ module.exports = (Plugin, Library) => {
 
     pingWhitelistMatch(message, channel, guild) {
       Logger.info('Whitelist match found!');
-      this.sendMatchNotification(
-        `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.webp?size=256`,
-        `User match in ${guild}!`,
-        `${message.author.username} typed in #${channel.name}.`,
-        `/channels/${message.guild_id}/${channel.id}/${message.id}`,
-        message,
-      );
+		if (this.settings.allNotifications) {
+		  this.sendMatchNotification(
+			`https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.webp?size=256`,
+			`User match in ${guild}!`,
+			`${message.author.username} typed in #${channel.name}.`,
+			`/channels/${message.guild_id}/${channel.id}/${message.id}`,
+			message,
+		  );
+		}
       message._match = `User ID ${message.author.id}`;
       this.settings.unreadMatches[message.id] = message;
       this.saveSettings();
@@ -179,15 +182,17 @@ module.exports = (Plugin, Library) => {
 
     pingSuccess(message, channel, guild, match) {
       Logger.info('Match found!');
-      this.sendMatchNotification(
-        `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.webp?size=256`,
-        `Keyword match in ${guild}!`,
-        `${message.author.username} matched ${match} in #${channel.name}.`,
-        `/channels/${message.guild_id}/${channel.id}/${message.id}`,
-        message,
-      );
-      if (this.settings.notifications) {
-        Modules.SoundModule.playSound("message1", 0.4);
+	  if (this.settings.allNotifications) {
+		  this.sendMatchNotification(
+			`https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.webp?size=256`,
+			`Keyword match in ${guild}!`,
+			`${message.author.username} matched ${match} in #${channel.name}.`,
+			`/channels/${message.guild_id}/${channel.id}/${message.id}`,
+			message,
+		  );
+		  if (this.settings.notifications) {
+			Modules.SoundModule.playSound("message1", 0.4);
+		  }
       }
       message._match = `${match}`;
       this.settings.unreadMatches[message.id] = message;
@@ -527,6 +532,11 @@ module.exports = (Plugin, Library) => {
       let other = new SettingGroup('Other');
       panel.append(other);
 
+      let allNotificationsSwitch = this.makeSwitch(this.settings.allNotifications, (v) => {
+		  this.settings.allNotifications = v;
+        this.saveSettings();
+      });
+
       let notificationSwitch = this.makeSwitch(this.settings.notifications, (v) => {
         this.settings.notifications = v;
         this.saveSettings();
@@ -536,6 +546,9 @@ module.exports = (Plugin, Library) => {
         this.settings.allowSelf = v;
         this.saveSettings();
       });
+
+      let allNotificationsToggle = new SettingField('', 'Enable notifications', null, allNotificationsSwitch, { noteOnTop: true });
+      other.append(allNotificationsToggle);
 
       let notificationToggle = new SettingField('', 'Enable notification sounds', null, notificationSwitch, { noteOnTop: true });
       other.append(notificationToggle);
