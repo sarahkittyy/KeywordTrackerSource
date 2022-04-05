@@ -75,7 +75,7 @@ module.exports = (Plugin, Library) => {
         const guilds = Object.values(Modules.GuildStore.getGuilds());
         let event = args[0];
         if (event.type !== 'MESSAGE_CREATE') return;
-        // get message data
+        // get me  data
         let { message } = event;
         // get channel data
         let channel = Modules.ChannelStore.getChannel(message.channel_id);
@@ -91,8 +91,6 @@ module.exports = (Plugin, Library) => {
 
         // no dms!
         if (!channel.guild_id) return;
-
-        Logger.info('nya!');
 
         // add guild to settings if it does not exist
         if (this.settings.guilds[channel.guild_id] == null) {
@@ -157,8 +155,11 @@ module.exports = (Plugin, Library) => {
         thumbnail,
         title,
         text,
-        // opts
         {
+        },
+				// opts
+				{
+					sound: this.settings.notifications ? 'message1' : null,
           onClick: () => {
             delete this.settings.unreadMatches[message.id];
             this.saveSettings();
@@ -168,12 +169,12 @@ module.exports = (Plugin, Library) => {
               undefined,
             );
           }
-        }
+				}
       );
     }
 
     pingWhitelistMatch(message, channel, guild) {
-      Logger.info('Match found!');
+      Logger.info('Whitelist match found!');
       this.sendMatchNotification(
         `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.webp?size=256`,
         `User match in ${guild}!`,
@@ -181,9 +182,6 @@ module.exports = (Plugin, Library) => {
         `/channels/${message.guild_id}/${channel.id}/${message.id}`,
         message,
       );
-      if (this.settings.notifications) {
-        Modules.SoundModule.playSound("message1", 0.4);
-      }
       message._match = `User ID ${message.author.id}`;
       this.settings.unreadMatches[message.id] = message;
       this.saveSettings();
@@ -386,7 +384,6 @@ module.exports = (Plugin, Library) => {
                       }, [])
                       .map(g => {
                         g.channels = Modules.GuildChannelsStore.getChannels(g.id).SELECTABLE.map(c => c.channel);
-                        Logger.info(g.channels);
                         return g;
                       });
       const { parseHTML } = DOMTools;
