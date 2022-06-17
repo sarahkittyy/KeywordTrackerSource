@@ -45,9 +45,9 @@ module.exports = (Plugin, Library) => {
         if (props.toolbar.type === 'function') return;
         if (this.inboxPanel == null) {
           this.inboxPanel = this.buildInboxPanel();
-					if (typeof props.toolbar.props.children[0].splice !== 'function') return;
-					props.toolbar.props.children[0].splice(Math.max(3, props.toolbar.props.children[0].length - 1), 0, this.inboxPanel);
         }
+				if (typeof props.toolbar.props.children[0].splice !== 'function') return;
+				props.toolbar.props.children[0].splice(Math.max(3, props.toolbar.props.children[0].length - 1), 0, this.inboxPanel);
       });
 
       this.userId = BdApi.findModuleByProps('getId').getId();
