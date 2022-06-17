@@ -7,7 +7,7 @@
       "github_username": "sarahkittyy",
       "twitter_username": "snuggleskittyy"
     }],
-    "version": "1.3.4",
+    "version": "1.3.5",
     "description": "Be notified when a message matches a keyword :)",
     "github": "https://github.com/sarahkittyy/KeywordTracker",
     "github_raw": "https://raw.githubusercontent.com/sarahkittyy/KeywordTracker/main/KeywordTracker.plugin.js",
@@ -17,6 +17,12 @@
     "updateUrl": "https://raw.githubusercontent.com/sarahkittyy/KeywordTracker/main/KeywordTracker.plugin.js"
   },
   "changelog": [
+    {
+      "title": "v1.3.5",
+      "items": [
+        "Fixed crash."
+      ]
+    },
     {
       "title": "v1.3.4",
       "items": [
