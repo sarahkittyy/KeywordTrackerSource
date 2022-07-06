@@ -10,6 +10,7 @@ module.exports = (Plugin, Library) => {
     unreadMatches: {},
     notifications: true,
     allowSelf: false,
+		allowEmbeds: true,
   };
   const {
     DOMTools,
@@ -77,7 +78,8 @@ module.exports = (Plugin, Library) => {
         if (this.settings.allowSelf === false && message.author.id === this.userId) return;
         // ignore ignored users
         if (this.settings.ignoredUsers.includes(message.author.id)) return;
-        if (!message.content) return;
+
+        if (!message.content && (!message.embeds || message.embeds.length === 0)) return;
 
         // no dms!
         if (!channel.guild_id) return;
@@ -128,7 +130,11 @@ module.exports = (Plugin, Library) => {
             rx = new RegExp(RegexEscape(kw));
           }
 
-          if (rx.test(message.content)) {
+          if (rx.test(message.content) || (
+						message.embeds &&
+						this.settings.allowEmbeds &&
+						rx.test(JSON.stringify(message.embeds))
+					)) {
             let guild = guilds.find(g => g.id === channel.guild_id);
             this.pingSuccess(message, channel, guild.name, rx);
             return false; // stop searching
@@ -537,8 +543,16 @@ module.exports = (Plugin, Library) => {
         this.saveSettings();
       });
 
+      let embedSwitch = this.makeSwitch(this.settings.allowEmbeds, (v) => {
+        this.settings.allowEmbeds = v;
+        this.saveSettings();
+      });
+
       let notificationToggle = new SettingField('', 'Enable notification sounds', null, notificationSwitch, { noteOnTop: true });
       other.append(notificationToggle);
+
+      let embedToggle = new SettingField('', 'Enable matching embed content.', null, embedSwitch, { noteOnTop: true });
+      other.append(embedToggle);
 
       let selfPingToggle = new SettingField('', 'Enable own messages to trigger notifications.', null, selfPingSwitch, { noteOnTop: true });
       other.append(selfPingToggle);
