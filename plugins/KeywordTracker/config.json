@@ -7,7 +7,7 @@
       "github_username": "sarahkittyy",
       "twitter_username": "snuggleskittyy"
     }],
-    "version": "1.3.7",
+    "version": "1.3.8",
     "description": "Be notified when a message matches a keyword :)",
     "github": "https://github.com/sarahkittyy/KeywordTracker",
     "github_raw": "https://raw.githubusercontent.com/sarahkittyy/KeywordTracker/main/KeywordTracker.plugin.js",
@@ -17,6 +17,13 @@
     "updateUrl": "https://raw.githubusercontent.com/sarahkittyy/KeywordTracker/main/KeywordTracker.plugin.js"
   },
   "changelog": [
+    {
+      "title": "v1.3.8",
+      "items": [
+        "Improved embeds to not track unnecessary words.",
+        "Allow bot messages to be enabled or disabled"
+      ]
+    },
     {
       "title": "v1.3.7",
       "items": [

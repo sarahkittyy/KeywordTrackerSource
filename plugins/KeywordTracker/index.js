@@ -11,6 +11,7 @@ module.exports = (Plugin, Library) => {
     notifications: true,
     allowSelf: false,
 		allowEmbeds: true,
+		allowBots: true,
   };
   const {
     DOMTools,
@@ -61,6 +62,19 @@ module.exports = (Plugin, Library) => {
       PluginUtilities.removeStyle(this.getName());
     }
 
+		objectValues(object) {
+			if (!object) return [];
+			const res = [];
+			for(const [k, v] of Object.entries(object)) {
+				if (typeof v === 'object') {
+					res.push(...this.objectValues(v));
+				} else {
+					res.push(v);
+				}
+			}
+			return res;
+		}
+
     handleMessage(_, args) {
       try {
         const guilds = Object.values(Modules.GuildStore.getGuilds());
@@ -80,6 +94,7 @@ module.exports = (Plugin, Library) => {
         if (this.settings.ignoredUsers.includes(message.author.id)) return;
 
         if (!message.content && (!message.embeds || message.embeds.length === 0)) return;
+				if (message.author.bot && !this.settings.allowBots) return;
 
         // no dms!
         if (!channel.guild_id) return;
@@ -133,7 +148,7 @@ module.exports = (Plugin, Library) => {
           if (rx.test(message.content) || (
 						message.embeds &&
 						this.settings.allowEmbeds &&
-						rx.test(JSON.stringify(message.embeds))
+						rx.test(JSON.stringify(this.objectValues(message.embeds)))
 					)) {
             let guild = guilds.find(g => g.id === channel.guild_id);
             this.pingSuccess(message, channel, guild.name, rx);
@@ -543,6 +558,11 @@ module.exports = (Plugin, Library) => {
         this.saveSettings();
       });
 
+      let botSwitch = this.makeSwitch(this.settings.allowBots, (v) => {
+        this.settings.allowBots = v;
+        this.saveSettings();
+      });
+
       let embedSwitch = this.makeSwitch(this.settings.allowEmbeds, (v) => {
         this.settings.allowEmbeds = v;
         this.saveSettings();
@@ -554,8 +574,12 @@ module.exports = (Plugin, Library) => {
       let embedToggle = new SettingField('', 'Enable matching embed content.', null, embedSwitch, { noteOnTop: true });
       other.append(embedToggle);
 
+      let botToggle = new SettingField('', 'Enable bots to trigger notifications.', null, botSwitch, { noteOnTop: true });
+      other.append(botToggle);
+
       let selfPingToggle = new SettingField('', 'Enable own messages to trigger notifications.', null, selfPingSwitch, { noteOnTop: true });
       other.append(selfPingToggle);
+
 
       let ignoreuseridstip = new SettingField('', 'Ignore users here. One user ID per line. (Right click name -> Copy ID). Be sure developer options are on.', null, document.createElement('div'));
       other.append(ignoreuseridstip);
