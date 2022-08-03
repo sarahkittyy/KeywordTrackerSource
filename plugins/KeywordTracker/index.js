@@ -38,7 +38,7 @@ module.exports = (Plugin, Library) => {
       PluginUtilities.addStyle(this.getName(), switchCss);
       PluginUtilities.addStyle(this.getName(), inboxCss);
 
-      let dispatchModule = BdApi.findModuleByProps('dirtyDispatch');
+      let dispatchModule = BdApi.findModuleByProps('dispatch', 'subscribe');
       BdApi.Patcher.after(this.getName(), dispatchModule, 'dispatch', this.handleMessage.bind(this));
 
       const TitleBar = BdApi.findModuleByProps('Title', 'default', 'Caret');

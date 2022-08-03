@@ -18,6 +18,12 @@
   },
   "changelog": [
     {
+      "title": "v1.3.9",
+      "items": [
+        "Fixed dirtyDispatch being removed"
+      ]
+    },
+    {
       "title": "v1.3.8",
       "items": [
         "Improved embeds to not track unnecessary words.",
