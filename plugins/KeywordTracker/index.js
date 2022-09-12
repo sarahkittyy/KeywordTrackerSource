@@ -28,7 +28,7 @@ module.exports = (Plugin, Library) => {
   } = Library;
 
   const RegexEscape = function(string) {
-    return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+    return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
   };
 
   return class KeywordTracker extends Plugin {
@@ -136,6 +136,17 @@ module.exports = (Plugin, Library) => {
         // run through every single keyword as a regex
         this.settings.keywords.every((kw) => {
           let rx;
+					let uid;
+					// first, filter out any user id matching
+					let isUserSpecific = /^@(\d+):(.*)$/g.exec(kw);
+					if (isUserSpecific != null) {
+						uid = isUserSpecific[1];
+						kw = isUserSpecific[2];
+						console.log(kw);
+						console.log(`uid = ${uid} ${typeof uid}`);
+						console.log(`mid = ${message.author.id} ${typeof message.author.id}`);
+					}
+					// then convert the rest into a regex
           let isSlashRegex = /^\/(.*)\/([a-z]*)$/g.exec(kw);
           if (isSlashRegex != null) {
             let text = isSlashRegex[1];
@@ -144,6 +155,10 @@ module.exports = (Plugin, Library) => {
           } else {
             rx = new RegExp(RegexEscape(kw));
           }
+
+					if (uid != null && !isNaN(uid) && message.author.id !== uid) {
+						return true;
+					}
 
           if (rx.test(message.content) || (
 						message.embeds &&
@@ -407,7 +422,7 @@ module.exports = (Plugin, Library) => {
       let keywords = new SettingGroup('Keywords');
       panel.append(keywords);
 
-      let tip = new SettingField('', 'One keyword per line. Regex syntax allowed, eg. /sarah/i.', null, document.createElement('div'));
+      let tip = new SettingField('', 'One keyword per line. Regex syntax allowed, eg. /sarah/i.\nPrefix your keyword with @userid: to track keyword matches from a single user, i.e. @135895345296048128:/word/i. A user\'s id can be found by right clicking their name -> Copy ID (Requires developer mode to be on.)', null, document.createElement('div'));
       keywords.append(tip);
       
       // add keyword textbox
