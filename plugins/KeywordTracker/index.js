@@ -25,6 +25,7 @@ module.exports = (Plugin, Library) => {
     Tooltip,
     Toasts: Toast,
     DiscordModules: Modules,
+		WebpackModules,
   } = Library;
 
   const RegexEscape = function(string) {
@@ -41,18 +42,19 @@ module.exports = (Plugin, Library) => {
       let dispatchModule = BdApi.findModuleByProps('dispatch', 'subscribe');
       BdApi.Patcher.after(this.getName(), dispatchModule, 'dispatch', this.handleMessage.bind(this));
 
-      const TitleBar = BdApi.findModuleByProps('Title', 'default', 'Caret');
+      const TitleBar = WebpackModules.getModule(m => Object.values(m).some(m => m?.Title && m?.Caret), { searchGetters: false });
       this.inboxPanel = null;
-      BdApi.Patcher.before(this.getName(), TitleBar, "default", (_, [props], ret) => {
+      Patcher.after(TitleBar, "ZP", (self, [props], ret) => {
         if (props.toolbar.type === 'function') return;
         if (this.inboxPanel == null) {
           this.inboxPanel = this.buildInboxPanel();
         }
 				if (typeof props.toolbar.props.children[0].splice !== 'function') return;
+				console.log('test');
 				props.toolbar.props.children[0].splice(Math.max(3, props.toolbar.props.children[0].length - 1), 0, this.inboxPanel);
       });
 
-      this.userId = BdApi.findModuleByProps('getId').getId();
+      this.userId = Modules.UserStore.getCurrentUser().id;
     }
 
     onStop() {
@@ -98,6 +100,7 @@ module.exports = (Plugin, Library) => {
 
         // no dms!
         if (!channel.guild_id) return;
+				if (!message.guild_id) message.guild_id = channel.guild_id;
 
         // add guild to settings if it does not exist
         if (this.settings.guilds[channel.guild_id] == null) {
@@ -222,9 +225,9 @@ module.exports = (Plugin, Library) => {
         `/channels/${message.guild_id}/${channel.id}/${message.id}`,
         message,
       );
-      if (this.settings.notifications) {
-        Modules.SoundModule.playSound("message1", 0.4);
-      }
+      //if (this.settings.notifications) {
+        //Modules.SoundModule.playSound("message1", 0.4);
+      //}
       message._match = `${match}`;
       this.settings.unreadMatches[message.id] = message;
       this.saveSettings();
