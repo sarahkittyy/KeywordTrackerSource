@@ -50,7 +50,6 @@ module.exports = (Plugin, Library) => {
           this.inboxPanel = this.buildInboxPanel();
         }
 				if (typeof props.toolbar.props.children[0].splice !== 'function') return;
-				console.log('test');
 				props.toolbar.props.children[0].splice(Math.max(3, props.toolbar.props.children[0].length - 1), 0, this.inboxPanel);
       });
 
