@@ -42,7 +42,7 @@ module.exports = (Plugin, Library) => {
       let dispatchModule = BdApi.findModuleByProps('dispatch', 'subscribe');
       BdApi.Patcher.after(this.getName(), dispatchModule, 'dispatch', this.handleMessage.bind(this));
 
-      const TitleBar = WebpackModules.getModule(m => Object.values(m).some(m => m?.Title && m?.Caret), { searchGetters: false });
+      const TitleBar = WebpackModules.getModule(m => Object.values(m).some(m => m?.Title && m?.Caret && m?.toString?.()?.includes('toolbar')), { searchGetters: false });
       this.inboxPanel = null;
       Patcher.after(TitleBar, "ZP", (self, [props], ret) => {
         if (props.toolbar.type === 'function') return;
