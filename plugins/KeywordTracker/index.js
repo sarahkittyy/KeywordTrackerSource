@@ -32,6 +32,16 @@ module.exports = (Plugin, Library) => {
     return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
   };
 
+  const escapeHtml = function(string)
+  {
+	return string
+		 .replace(/&/g, "&amp;")
+		 .replace(/</g, "&lt;")
+		 .replace(/>/g, "&gt;")
+		 .replace(/"/g, "&quot;")
+		 .replace(/'/g, "&#039;")
+  };
+  
   return class KeywordTracker extends Plugin {
     async onStart() {
       this.cancelPatches = [];
@@ -356,7 +366,7 @@ module.exports = (Plugin, Library) => {
 
           let matched = document.createElement('span');
           matched.className = 'matched';
-          matched.innerHTML = `Matched ${msg._match}`;
+          matched.innerHTML = `Matched ${escapeHtml(msg._match)}`;
           entry.appendChild(matched);
 
           let markRead = document.createElement('button');
