@@ -1,0 +1,61 @@
+.kt-inbox-container {
+	color: white;
+}
+
+.kt-inbox-entry {
+	color: white;
+	padding: 5px;
+	padding-bottom: 10px;
+	margin: 10px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	border-bottom: 1px solid #444;
+	line-height: 22px;
+}
+
+.kt-inbox-entry > .timestamp {
+	font-size: 8pt;
+	color: #888;
+}
+
+.kt-inbox-entry > .usericon {
+	max-width: 24px;
+	max-height: 24px;
+	transform: translateY(8px);
+	margin-left: 5px;
+	border-radius: 50%;
+}
+
+.kt-inbox-entry > .username {
+	margin-left: 5px;
+}
+
+.kt-inbox-entry > .content {
+	color: #88a;
+}
+
+.kt-inbox-entry > .matched {
+	font-size: 10pt;
+	color: #abc;
+}
+
+.kt-inbox-entry > button {
+	display: inline-block;
+	font-family: Whitney, "Open Sans", Helvetica, sans-serif;
+	font-weight: 400;
+	font-size: 11pt;
+	border-radius: 3px;
+	cursor: pointer;
+	width: auto;
+	height: auto;
+	box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
+	background-color: #7289da;
+	border: 2px solid #7289da;
+	color: #fff;
+	margin-left: 5px;
+	transition: all 200ms;
+}
+
+.kt-inbox-entry > button:active {
+	transform: translateY(2px);
+}

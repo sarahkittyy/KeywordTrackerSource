@@ -1,0 +1,15 @@
+{
+  "name": "keywordtracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+      "build": "zpl build",
+      "init": "zpl init"
+  },
+  "author": "Sarah Ohlin",
+  "license": "MIT",
+  "dependencies": {
+    "zerespluginlibrary": "^2.0.6"
+  }
+}
