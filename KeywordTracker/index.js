@@ -362,7 +362,7 @@ module.exports = (Plugin, Library) => {
 
           let timestamp = document.createElement('span');
           timestamp.className = 'timestamp';
-          timestamp.innerHTML = `${new Date(msg.timestamp).toLocaleString()}`;
+          timestamp.textContent = `${new Date(msg.timestamp).toLocaleString()}`;
           entry.appendChild(timestamp);
 
           let icon = document.createElement('img');
@@ -373,19 +373,19 @@ module.exports = (Plugin, Library) => {
 
           let username = document.createElement('span');
           username.className = 'username';
-          username.innerHTML = `${msg.author.username}: `;
+          username.textContent = `${msg.author.username}: `;
           entry.appendChild(username);
           
           let content = document.createElement('span');
           content.className = 'content';
-          content.innerHTML = msg.content;
+          content.textContent = msg.content;
           entry.appendChild(content);
 
           entry.appendChild(document.createElement('br'));
 
           let matched = document.createElement('span');
           matched.className = 'matched';
-          matched.innerHTML = `Matched ${msg._match}`;
+          matched.textContent = `Matched ${msg._match}`;
           entry.appendChild(matched);
 
           let markRead = document.createElement('button');
@@ -394,7 +394,7 @@ module.exports = (Plugin, Library) => {
             this.saveSettings();
             root.dispatchEvent(EntryFlushEvent);
           });
-          markRead.innerHTML = 'Mark as Read';
+          markRead.textContent = 'Mark as Read';
           entry.appendChild(markRead);
 
           let jump = document.createElement('button');
@@ -408,13 +408,13 @@ module.exports = (Plugin, Library) => {
               undefined,
             );
           });
-          jump.innerHTML = 'Jump';
+          jump.textContent = 'Jump';
           entry.appendChild(jump);
 
           return entry;
         };
         if (sortedMatches.length === 0) {
-          root.innerHTML = 'No recent matches.';
+          root.textContent = 'No recent matches.';
           root.setAttribute('style', 'line-height: 90px; text-align: center;');
         } else {
           for(let msg of sortedMatches) {
@@ -425,7 +425,7 @@ module.exports = (Plugin, Library) => {
       setupEntries();
 
       root.addEventListener('entryflush', () => {
-        root.innerHTML = '';
+        root.textContent = '';
         setupEntries();
       });
 
