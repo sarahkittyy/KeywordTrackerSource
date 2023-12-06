@@ -18,6 +18,13 @@
   },
   "changelog": [
     {
+      "title": "v1.5.1",
+      "items": [
+        "Fixed light theme channel colors.",
+        "Removed titles from marked as read and jump to buttons (replaced by tooltips)"
+      ]
+    },
+    {
       "title": "v1.5.0",
       "items": [
         "Improved inbox icon",

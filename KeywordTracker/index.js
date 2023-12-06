@@ -396,10 +396,10 @@ module.exports = (Plugin, Library) => {
             <div class="kt-entry-row">
               <span class="kt-matched">Matched <code></code></span>
               <span class="kt-spacer"></span>
-              <div class="kt-button kt-read" title="Mark as read">
+              <div class="kt-button kt-read">
                 <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M21.7 5.3a1 1 0 0 1 0 1.4l-12 12a1 1 0 0 1-1.4 0l-6-6a1 1 0 1 1 1.4-1.4L9 16.58l11.3-11.3a1 1 0 0 1 1.4 0Z"></path></svg>
               </div>
-              <div class="kt-button kt-jump" title="Jump to message">
+              <div class="kt-button kt-jump">
                 <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M15 2a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0V4.41l-4.3 4.3a1 1 0 1 1-1.4-1.42L19.58 3H16a1 1 0 0 1-1-1Z" class=""></path><path fill="currentColor" d="M5 2a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 1 0-2 0v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 1 0 0-2H5Z"></path></svg>
               </div>
             </div>
@@ -591,15 +591,9 @@ module.exports = (Plugin, Library) => {
                 this.saveSettings();
               });
               let channelSwitchContainer = document.createElement('div');
-              channelSwitchContainer.style.width = '95%';
-              channelSwitchContainer.style['margin-left'] = '2.5%';
-              channelSwitchContainer.style.display = 'flex';
-              channelSwitchContainer.style['justify-content'] = 'space-between';
-              channelSwitchContainer.style['margin-bottom'] = '3px';
-              channelSwitchContainer.style['border-bottom'] = '1px solid #333';
+							channelSwitchContainer.className = 'kt-channel-container';
               let channelSwitchText = document.createElement('h2');
-              channelSwitchText.style['font-size'] = '16px';
-              channelSwitchText.style['color'] = 'white';
+							channelSwitchText.className = 'kt-channel-name';
               channelSwitchText.innerText = `${c.name}`;
               channelSwitchContainer.append(channelSwitchText);
               channelSwitchContainer.append(channelSwitch);
