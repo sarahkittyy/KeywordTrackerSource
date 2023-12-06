@@ -382,13 +382,17 @@ module.exports = (Plugin, Library) => {
           entry.querySelector('.kt-content').textContent = msg.content;
           entry.querySelector('.kt-matched > code').textContent = msg._match;
 
-          entry.querySelector('.kt-read').addEventListener('click', e => {
+          let read_btn = entry.querySelector('.kt-read');
+					new Tooltip(read_btn, 'Mark as read');
+					read_btn.addEventListener('click', e => {
             delete this.settings.unreadMatches[msg.id];
             this.saveSettings();
             root.dispatchEvent(EntryFlushEvent);
           });
 
-          entry.querySelector('.kt-jump').addEventListener('click', e => {
+          let jump_btn = entry.querySelector('.kt-jump');
+					new Tooltip(jump_btn, 'Jump to message');
+					jump_btn.addEventListener('click', e => {
             delete this.settings.unreadMatches[msg.id];
             this.saveSettings();
             closeModal();
