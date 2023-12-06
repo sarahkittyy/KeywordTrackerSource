@@ -357,48 +357,38 @@ module.exports = (Plugin, Library) => {
           });
 
         const matchEntry = (msg) => {
-          let entry = document.createElement('div');
+          const entry = document.createElement('div');
           entry.className = 'kt-inbox-entry';
+          entry.innerHTML = `
+            <div class="kt-entry-row">
+              <img class="kt-usericon" src="https://cdn.discordapp.com/avatars/${msg.author.id}/${msg.author.avatar}.webp?size=24" />
+              <span class="kt-username"></span>
+              <span class="kt-timestamp">${new Date(msg.timestamp).toLocaleString()}</span>
+            </div>
+            <div class="kt-content"></div>
+            <div class="kt-entry-row">
+              <span class="kt-matched">Matched <code></code></span>
+              <span class="kt-spacer"></span>
+              <div class="kt-button kt-read" title="Mark as read">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M21.7 5.3a1 1 0 0 1 0 1.4l-12 12a1 1 0 0 1-1.4 0l-6-6a1 1 0 1 1 1.4-1.4L9 16.58l11.3-11.3a1 1 0 0 1 1.4 0Z"></path></svg>
+              </div>
+              <div class="kt-button kt-jump" title="Jump to message">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M15 2a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0V4.41l-4.3 4.3a1 1 0 1 1-1.4-1.42L19.58 3H16a1 1 0 0 1-1-1Z" class=""></path><path fill="currentColor" d="M5 2a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a1 1 0 1 0-2 0v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6a1 1 0 1 0 0-2H5Z"></path></svg>
+              </div>
+            </div>
+          `;
 
-          let timestamp = document.createElement('span');
-          timestamp.className = 'timestamp';
-          timestamp.textContent = `${new Date(msg.timestamp).toLocaleString()}`;
-          entry.appendChild(timestamp);
+          entry.querySelector('.kt-username').textContent = msg.author.username;
+          entry.querySelector('.kt-content').textContent = msg.content;
+          entry.querySelector('.kt-matched > code').textContent = msg._match;
 
-          let icon = document.createElement('img');
-          let iconUrl = `https://cdn.discordapp.com/avatars/${msg.author.id}/${msg.author.avatar}.webp?size=256`
-          icon.className = 'usericon';
-          icon.setAttribute('src', iconUrl);
-          entry.appendChild(icon);
-
-          let username = document.createElement('span');
-          username.className = 'username';
-          username.textContent = `${msg.author.username}: `;
-          entry.appendChild(username);
-          
-          let content = document.createElement('span');
-          content.className = 'content';
-          content.textContent = msg.content;
-          entry.appendChild(content);
-
-          entry.appendChild(document.createElement('br'));
-
-          let matched = document.createElement('span');
-          matched.className = 'matched';
-          matched.textContent = `Matched ${msg._match}`;
-          entry.appendChild(matched);
-
-          let markRead = document.createElement('button');
-          markRead.addEventListener('click', () => {
+          entry.querySelector('.kt-read').addEventListener('click', e => {
             delete this.settings.unreadMatches[msg.id];
             this.saveSettings();
             root.dispatchEvent(EntryFlushEvent);
           });
-          markRead.textContent = 'Mark as Read';
-          entry.appendChild(markRead);
 
-          let jump = document.createElement('button');
-          jump.addEventListener('click', () => {
+          entry.querySelector('.kt-jump').addEventListener('click', e => {
             delete this.settings.unreadMatches[msg.id];
             this.saveSettings();
             closeModal();
@@ -408,8 +398,6 @@ module.exports = (Plugin, Library) => {
               undefined,
             );
           });
-          jump.textContent = 'Jump';
-          entry.appendChild(jump);
 
           return entry;
         };
