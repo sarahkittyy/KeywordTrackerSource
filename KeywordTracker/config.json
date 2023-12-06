@@ -7,7 +7,7 @@
       "github_username": "sarahkittyy",
       "twitter_username": "snuggleskittyy"
     }],
-    "version": "1.4.6",
+    "version": "1.5.0",
     "description": "Be notified when a message matches a keyword :)",
     "github": "https://github.com/sarahkittyy/KeywordTracker",
     "github_raw": "https://raw.githubusercontent.com/sarahkittyy/KeywordTracker/main/KeywordTracker.plugin.js",
@@ -17,6 +17,17 @@
     "updateUrl": "https://raw.githubusercontent.com/sarahkittyy/KeywordTracker/main/KeywordTracker.plugin.js"
   },
   "changelog": [
+    {
+      "title": "v1.5.0",
+      "items": [
+        "Improved inbox icon",
+        "Fixed(?) weird line divider in the toolbar sometimes",
+        "No longer marks jumped-to messages as read by default.",
+        "Added an option in settings to mark messages as read when jumping to them.",
+        "Keywords can be filtered to just specific users, specific channels, and specific servers. Requested for a while I think!!! :)",
+        "Cleanups and bugfixes"
+      ]
+    },
     {
       "title": "v1.4.6",
       "items": [

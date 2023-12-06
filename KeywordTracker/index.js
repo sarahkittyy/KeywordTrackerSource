@@ -1,7 +1,7 @@
 module.exports = (Plugin, Library) => {
   const switchCss = require('switch.css');
   const inboxCss = require('inbox.css');
-	const iconSVG = require('icon.svg');
+	const iconSVG = require('book-icon.svg');
   const defaultSettings = {
     whitelistedUsers: [],
     keywords: [],
@@ -13,6 +13,7 @@ module.exports = (Plugin, Library) => {
     allowSelf: false,
 		allowEmbeds: true,
 		allowBots: true,
+		markJumpedRead: false,
   };
   const {
 		ReactTools,
@@ -36,6 +37,10 @@ module.exports = (Plugin, Library) => {
     return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
   };
 
+	const log = (...args) => {
+		Logger.info(...args);
+	};
+
   return class KeywordTracker extends Plugin {
 		/**
 		 * Plugin init
@@ -55,7 +60,7 @@ module.exports = (Plugin, Library) => {
 			const keyFilter = BdApi.Webpack.Filters.byKeys("Icon", "Title");
 
 			// patch the title bar to add the inbox button
-			const [ titlebarModule, titlebarKey ] =BdApi.Webpack.getWithKey((m) => keyFilter(m) && !stringFilter(m));
+			const [ titlebarModule, titlebarKey ] = BdApi.Webpack.getWithKey((m) => keyFilter(m) && !stringFilter(m));
 			Patcher.before(this.getName(), titlebarModule, titlebarKey, (that, [ props ]) => {
         if (props.toolbar.type === 'function') return;
         if (this.inboxPanel == null) { // build the panel if it's not already built
@@ -68,6 +73,7 @@ module.exports = (Plugin, Library) => {
 			});
 
       this.userId = Modules.UserStore.getCurrentUser().id;
+
     }
 
     onStop() {
@@ -90,6 +96,7 @@ module.exports = (Plugin, Library) => {
 			return res;
 		}
 
+		// fired when a message is received
     handleMessage(_, args) {
       try {
         const guilds = Object.values(Modules.GuildStore.getGuilds());
@@ -150,36 +157,41 @@ module.exports = (Plugin, Library) => {
         }
 
         // run through every single keyword as a regex
-        this.settings.keywords.every((kw) => {
-          let rx;
-					let uid;
-					// first, filter out any user id matching
-					let isUserSpecific = /^@(\d+):(.*)$/g.exec(kw);
-					if (isUserSpecific != null) {
-						uid = isUserSpecific[1];
-						kw = isUserSpecific[2];
+        this.settings.keywords.every((keyword) => {
+          let regex = undefined; // the regex to run on the message content
+					let filter = undefined; 
+					// retrieve the filter (user, channel, server) if there is any
+					//                 type    id    regex
+					let isFiltered = /^([@#]?)(\d+):(.*)$/g.exec(keyword);
+					if (isFiltered != null) {
+						filter = {
+							type: isFiltered[1],
+							id: isFiltered[2],
+						};
+						keyword = isFiltered[3];
 					}
 					// then convert the rest into a regex
-          let isSlashRegex = /^\/(.*)\/([a-z]*)$/g.exec(kw);
+          let isSlashRegex = /^\/(.*)\/([a-z]*)$/g.exec(keyword);
           if (isSlashRegex != null) {
             let text = isSlashRegex[1];
             let flags = isSlashRegex[2];
-            rx = new RegExp(text, flags);
+            regex = new RegExp(text, flags);
           } else {
-            rx = new RegExp(RegexEscape(kw));
+            regex = new RegExp(RegexEscape(keyword));
           }
 
-					if (uid != null && !isNaN(uid) && message.author.id !== uid) {
+					// if there is a filter,,, and it doesn't pass, keep searching
+					if (filter != undefined && !this.passesFilter(filter, message)) {
 						return true;
 					}
 
-          if (rx.test(message.content) || (
+          if (regex.test(message.content) || (
 						message.embeds &&
 						this.settings.allowEmbeds &&
-						rx.test(JSON.stringify(this.objectValues(message.embeds)))
+						regex.test(JSON.stringify(this.objectValues(message.embeds)))
 					)) {
             let guild = guilds.find(g => g.id === channel.guild_id);
-            this.pingSuccess(message, channel, guild.name, rx);
+            this.pingSuccess(message, channel, guild.name, regex);
             return false; // stop searching
           }
           return true;
@@ -188,6 +200,20 @@ module.exports = (Plugin, Library) => {
         Logger.error(`${e}`);
       }
     }
+
+		// type = @userid, #channelid, or serverid, message object, true if the message passes the filter and the content should be matched.
+		passesFilter({ type, id }, message) {
+			switch (type) {
+				case '@':
+					return message.author.id === id;
+				case '#':
+					return message.channel_id === id;
+				case '':
+					return message.guild_id === id;
+				default:
+					return false;
+			}
+		}
 
     sendMatchNotification(thumbnail, title, text, redirect, message) {
       Modules.NotificationModule.showNotification(
@@ -200,7 +226,9 @@ module.exports = (Plugin, Library) => {
 				{
 					sound: this.settings.notifications ? 'message1' : null,
           onClick: () => {
-            delete this.settings.unreadMatches[message.id];
+						if (this.settings.markJumpedRead) {
+							delete this.settings.unreadMatches[message.id];
+						}
             this.saveSettings();
             Modules.NavigationUtils.transitionTo(
               redirect,
@@ -213,7 +241,7 @@ module.exports = (Plugin, Library) => {
     }
 
     pingWhitelistMatch(message, channel, guild) {
-      Logger.info('Whitelist match found!');
+      log('Whitelist match found!');
       this.sendMatchNotification(
         `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.webp?size=256`,
         `User match in ${guild}!`,
@@ -227,7 +255,7 @@ module.exports = (Plugin, Library) => {
     }
 
     pingSuccess(message, channel, guild, match) {
-      Logger.info('Match found!');
+      log('Match found!');
       this.sendMatchNotification(
         `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.webp?size=256`,
         `Keyword match in ${guild}!`,
@@ -235,9 +263,6 @@ module.exports = (Plugin, Library) => {
         `/channels/${message.guild_id}/${channel.id}/${message.id}`,
         message,
       );
-      //if (this.settings.notifications) {
-        //Modules.SoundModule.playSound("message1", 0.4);
-      //}
       message._match = `${match}`;
       this.settings.unreadMatches[message.id] = message;
       this.saveSettings();
@@ -294,7 +319,7 @@ module.exports = (Plugin, Library) => {
 
     // build the inbox panel placed directly after the pinned messages button
     buildInboxPanel() {
-      let pinned = document.querySelector('div[class*="toolbar" i] > div:first-child');
+      let pinned = document.querySelector('div[class^="toolbar" i] > div:first-child');
       if (!pinned) {
         return;
       }
@@ -302,10 +327,11 @@ module.exports = (Plugin, Library) => {
       const ModalCloseEvent = new Event('modalclose');
 
       let inbox = pinned.cloneNode(true);
+			inbox.querySelector('span').remove();
       inbox.setAttribute('is-keyword-tracker-inbox', true);
       inbox.setAttribute('aria-label', 'Keyword Matches');
       let icon = inbox.querySelector('svg');
-      icon.setAttribute('viewBox', '0 0 20 20');
+      icon.setAttribute('viewBox', '0 0 122 96');
       // icon!
       icon.innerHTML = iconSVG;
       inbox.appendChild(icon);
@@ -315,7 +341,11 @@ module.exports = (Plugin, Library) => {
 
       // actual modal window on-click
       const openModal = () => {
-        let modalKey = Modals.showModal('Keyword Matches', this.renderInbox(() => { Modules.ModalActions.closeModal(modalKey); }), {
+				var modalKey = undefined;
+        const closeModal = () => {
+					Modules.ModalActions.closeModal(modalKey);
+        };
+        modalKey = Modals.showModal('Keyword Matches', this.renderInbox(closeModal), {
           confirmText: 'Close',
           cancelText: 'Mark as Read',
           onCancel: () => {
@@ -326,9 +356,6 @@ module.exports = (Plugin, Library) => {
             this.saveSettings();
           }
         });
-        const closeModal = () => {
-          Modules.ModalActions.closeModal(modalKey);
-        };
         inbox.removeEventListener('modalclose', closeModal);
         inbox.addEventListener('modalclose', closeModal);
       };
@@ -399,7 +426,9 @@ module.exports = (Plugin, Library) => {
 
           let jump = document.createElement('button');
           jump.addEventListener('click', () => {
-            delete this.settings.unreadMatches[msg.id];
+						if (this.settings.markJumpedRead) {
+							delete this.settings.unreadMatches[msg.id];
+						}
             this.saveSettings();
             closeModal();
             Modules.NavigationUtils.transitionTo(
@@ -451,8 +480,14 @@ module.exports = (Plugin, Library) => {
       let keywords = new SettingGroup('Keywords');
       panel.append(keywords);
 
-      let tip = new SettingField('', 'One keyword per line. Regex syntax allowed, eg. /sarah/i.\nPrefix your keyword with @userid: to track keyword matches from a single user, i.e. @135895345296048128:/word/i. A user\'s id can be found by right clicking their name -> Copy ID (Requires developer mode to be on.)', null, document.createElement('div'));
+      let tip = new SettingField('', 'One case-sensitive keyword per line. Regex syntax allowed, eg. /sarah/i. You can filter to specific users, channels, or servers. Examples:', null, document.createElement('div'));
       keywords.append(tip);
+      let tip2 = new SettingField('', '@12345678:Keyword watches for "Keyword" from user id 12345678 (Right click user -> Copy User ID, requires developer mode)', null, document.createElement('div'));
+      keywords.append(tip2);
+      let tip3 = new SettingField('', '#442312345:/case-insensitive/i watches messages in channel id 442312345 (Right click channel -> Copy Channel ID, requires developer mode)', null, document.createElement('div'));
+      keywords.append(tip3);
+      let tip4 = new SettingField('', '1239871234:/\d+/i watches numbers from server id 1239871234 (Right click server -> Copy Server ID, requires developer mode)', null, document.createElement('div'));
+      keywords.append(tip4);
       
       // add keyword textbox
       let textbox = document.createElement('textarea');
@@ -592,6 +627,11 @@ module.exports = (Plugin, Library) => {
       let other = new SettingGroup('Other');
       panel.append(other);
 
+      let markJumpedReadSwitch = this.makeSwitch(this.settings.markJumpedRead, (v) => {
+        this.settings.markJumpedRead = v;
+        this.saveSettings();
+      });
+
       let notificationSwitch = this.makeSwitch(this.settings.notifications, (v) => {
         this.settings.notifications = v;
         this.saveSettings();
@@ -611,6 +651,9 @@ module.exports = (Plugin, Library) => {
         this.settings.allowEmbeds = v;
         this.saveSettings();
       });
+
+      let markJumpedReadToggle = new SettingField('', 'Mark messages as read when jumping to them.', null, markJumpedReadSwitch, { noteOnTop: true });
+      other.append(markJumpedReadToggle);
 
       let notificationToggle = new SettingField('', 'Enable notification sounds', null, notificationSwitch, { noteOnTop: true });
       other.append(notificationToggle);
