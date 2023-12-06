@@ -1,61 +1,88 @@
-.kt-inbox-container {
-	color: white;
-}
-
 .kt-inbox-entry {
-	color: white;
-	padding: 5px;
-	padding-bottom: 10px;
-	margin: 10px;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	border-bottom: 1px solid #444;
-	line-height: 22px;
+  padding: 5px;
+  color: var(--text-normal);
 }
 
-.kt-inbox-entry > .timestamp {
-	font-size: 8pt;
-	color: #888;
+.kt-inbox-entry:not(:last-child) {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--background-secondary-alt);
 }
 
-.kt-inbox-entry > .usericon {
-	max-width: 24px;
-	max-height: 24px;
-	transform: translateY(8px);
-	margin-left: 5px;
-	border-radius: 50%;
+.kt-spacer {
+  flex: 1;
 }
 
-.kt-inbox-entry > .username {
-	margin-left: 5px;
+.kt-entry-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.kt-inbox-entry > .content {
-	color: #88a;
+.kt-usericon {
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
 }
 
-.kt-inbox-entry > .matched {
-	font-size: 10pt;
-	color: #abc;
+.kt-username {
+  color: var(--header-primary);
+  margin-left: -2px;
 }
 
-.kt-inbox-entry > button {
-	display: inline-block;
-	font-family: Whitney, "Open Sans", Helvetica, sans-serif;
-	font-weight: 400;
-	font-size: 11pt;
-	border-radius: 3px;
-	cursor: pointer;
-	width: auto;
-	height: auto;
-	box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
-	background-color: #7289da;
-	border: 2px solid #7289da;
-	color: #fff;
-	margin-left: 5px;
-	transition: all 200ms;
+.kt-timestamp {
+  color: var(--text-muted);
+  font-size: .75rem;
 }
 
-.kt-inbox-entry > button:active {
-	transform: translateY(2px);
+.kt-content {
+  padding: 8px 0 5px;
+  line-height: 1.25rem;
+}
+
+.kt-matched {
+  color: var(--text-muted);
+  font-size: .75rem;
+  display: flex;
+  align-items: center;
+}
+
+.kt-matched > code {
+  background-color: var(--background-secondary);
+  font-size: .75rem;
+  border: 1px solid var(--background-tertiary);
+  border-radius: 4px;
+  padding: 3px 5px;
+  margin-left: 3px;
+  color: var(--text-secondary);
+  max-width: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 250px;
+  display: inline-block;
+  text-overflow: ellipsis;
+}
+
+.kt-button {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-color: var(--background-secondary-alt);
+  transition: background-color .2s;
+}
+
+.kt-button:hover {
+  background-color: var(--background-tertiary);
+}
+
+.kt-button path {
+  transition: fill .2s;
+}
+
+.kt-button:hover path {
+  fill: var(--interactive-active);
 }
