@@ -24,7 +24,8 @@
         "Fixed(?) weird line divider in the toolbar sometimes",
         "No longer marks jumped-to messages as read by default.",
         "Added an option in settings to mark messages as read when jumping to them.",
-        "Keywords can be filtered to just specific users, specific channels, and specific servers. Requested for a while I think!!! :)",
+        "Keywords can be filtered to just specific users, specific channels, and specific servers. Highly request feature I think!!! :3",
+        "Brand new inbox panel with cleaner buttons and pretty regex markdown!! Thank you ewan for the pr :3.",
         "Cleanups and bugfixes"
       ]
     },

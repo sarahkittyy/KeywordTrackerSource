@@ -327,7 +327,7 @@ module.exports = (Plugin, Library) => {
       const ModalCloseEvent = new Event('modalclose');
 
       let inbox = pinned.cloneNode(true);
-			inbox.querySelector('span').remove();
+			inbox.querySelector('span')?.remove();
       inbox.setAttribute('is-keyword-tracker-inbox', true);
       inbox.setAttribute('aria-label', 'Keyword Matches');
       let icon = inbox.querySelector('svg');
