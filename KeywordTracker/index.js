@@ -129,8 +129,8 @@ module.exports = (Plugin, Library) => {
           this.settings.guilds[g.id] = {
             // set all channels to enabled by default
             channels: g.channels
-              .filter(c => c.type === 'GUILD_TEXT')
-              .reduce((obj, c) => {
+              ?.filter(c => c.type === 'GUILD_TEXT')
+              ?.reduce((obj, c) => {
                 obj[c.id] = true;
                 return obj;
               }, {}),
@@ -159,7 +159,7 @@ module.exports = (Plugin, Library) => {
         // run through every single keyword as a regex
         this.settings.keywords.every((keyword) => {
           let regex = undefined; // the regex to run on the message content
-					let filter = undefined; 
+					let filter = undefined;
 					// retrieve the filter (user, channel, server) if there is any
 					//                 type    id    regex
 					let isFiltered = /^([@#]?)(\d+):(.*)$/g.exec(keyword);
@@ -284,7 +284,7 @@ module.exports = (Plugin, Library) => {
       let div = document.createElement('div');
       label.append(input);
       label.append(div);
-      input.addEventListener('input', function (e) { 
+      input.addEventListener('input', function (e) {
         callback(this.checked);
       });
       return label;
@@ -480,7 +480,7 @@ module.exports = (Plugin, Library) => {
       keywords.append(tip3);
       let tip4 = new SettingField('', '1239871234:/\d+/i watches numbers from server id 1239871234 (Right click server -> Copy Server ID, requires developer mode)', null, document.createElement('div'));
       keywords.append(tip4);
-      
+
       // add keyword textbox
       let textbox = document.createElement('textarea');
       textbox.value = this.settings.keywords.join('\n');
