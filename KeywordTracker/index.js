@@ -123,14 +123,14 @@ module.exports = (Plugin, Library) => {
 				if (!message.guild_id) message.guild_id = channel.guild_id;
 
         // add guild to settings if it does not exist
-        if (this.settings.guilds[channel.guild_id] == null) {
-          let g = guilds.find(g => g.id === channel.guild_id);
-          if (!g) return;
+        if (!this.settings.guilds[channel.guild_id].channels) {
+          const g = guilds.find(g => g.id === channel.guild_id);
+          if (!g || !g.channels) return;
           this.settings.guilds[g.id] = {
             // set all channels to enabled by default
             channels: g.channels
-              ?.filter(c => c.type === 'GUILD_TEXT')
-              ?.reduce((obj, c) => {
+              .filter(c => c.type === 'GUILD_TEXT')
+              .reduce((obj, c) => {
                 obj[c.id] = true;
                 return obj;
               }, {}),
@@ -152,9 +152,7 @@ module.exports = (Plugin, Library) => {
         });
 
         // do not bother scanning keywords if the user themself was matched
-        if (whitelistedUserFound) {
-          return;
-        }
+        if (whitelistedUserFound) return;
 
         // run through every single keyword as a regex
         this.settings.keywords.every((keyword) => {
