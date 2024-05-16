@@ -429,7 +429,7 @@ module.exports = (Plugin, Library) => {
 					`;
 					entry.querySelector('.kt-usericon').src = msg.author.avatar !== null
 						? `https://cdn.discordapp.com/avatars/${msg.author.id}/${msg.author.avatar}.webp?size=24`
-						: `https://cdn.discordapp.com/embed/avatars/${(msg.author.id >> 22) % 6}.png`;
+						: `https://cdn.discordapp.com/embed/avatars/${(BigInt(msg.author.id) >> BigInt(22)) % BigInt(6)}.png`;
 					entry.querySelector('.kt-username').textContent = msg.author.username;
 					entry.querySelector('.kt-content').textContent = msg.content !== ""
 						? msg.content
