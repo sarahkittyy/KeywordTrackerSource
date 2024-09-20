@@ -37,6 +37,7 @@ module.exports = (Plugin, Library) => {
 	const NotificationModule = Webpack.getByKeys("showNotification");
 	const ModalActions = Webpack.getByKeys("openModal", "updateModal");
 	const ButtonData = Webpack.getByKeys("ButtonColors");
+	const GuildStore = Webpack.getStore("GuildStore");
 
 	const RegexEscape = function(string) {
 		return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -104,7 +105,7 @@ module.exports = (Plugin, Library) => {
 		// fired when a message is received
 		handleMessage(_, args) {
 			try {
-				const guilds = Object.values(Modules.GuildStore.getGuilds());
+				const guilds = Object.values(GuildStore.getGuilds());
 				let event = args[0];
 				if (event.type !== 'MESSAGE_CREATE') return;
 				// get me  data
@@ -479,7 +480,7 @@ module.exports = (Plugin, Library) => {
 		//TODO: god why
 		buildSettings() {
 			const { Textbox, SettingPanel, SettingGroup, Keybind, SettingField, /*Switch*/ } = Settings;
-			const guilds = Object.values(Modules.GuildStore.getGuilds())
+			const guilds = Object.values(GuildStore.getGuilds())
 											.sort((a, b) => `${a.id}`.localeCompare(`${b.id}`))
 											.map(g => {
 												g.channels = Modules.GuildChannelsStore.getChannels(g.id).SELECTABLE.map(c => c.channel);
