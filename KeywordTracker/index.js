@@ -35,11 +35,9 @@ module.exports = (Plugin, Library) => {
 	} = BdApi;
 
 	const NotificationModule = Webpack.getByKeys("showNotification");
-	const ModalActions = Webpack.getByKeys("openModal", "updateModal");
-	const ButtonData = Webpack.getByKeys("ButtonColors");
 	const GuildStore = Webpack.getStore("GuildStore");
 
-	const RegexEscape = function(string) {
+	const RegexEscape = function (string) {
 		return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 	};
 
@@ -66,8 +64,8 @@ module.exports = (Plugin, Library) => {
 			const keyFilter = BdApi.Webpack.Filters.byKeys("Icon", "Title");
 
 			// patch the title bar to add the inbox button
-			const [ titlebarModule, titlebarKey ] = Webpack.getWithKey((m) => keyFilter(m) && !stringFilter(m));
-			Patcher.before(this.getName(), titlebarModule, titlebarKey, (that, [ props ]) => {
+			const [titlebarModule, titlebarKey] = Webpack.getWithKey((m) => keyFilter(m) && !stringFilter(m));
+			Patcher.before(this.getName(), titlebarModule, titlebarKey, (that, [props]) => {
 				if (props.toolbar.type === 'function') return;
 				if (this.inboxPanel == null) { // build the panel if it's not already built
 					this.inboxPanel = this.buildInboxPanel();
@@ -92,7 +90,7 @@ module.exports = (Plugin, Library) => {
 		objectValues(object) {
 			if (!object) return [];
 			const res = [];
-			for(const [k, v] of Object.entries(object)) {
+			for (const [k, v] of Object.entries(object)) {
 				if (typeof v === 'object') {
 					res.push(...this.objectValues(v));
 				} else {
@@ -167,7 +165,7 @@ module.exports = (Plugin, Library) => {
 				// run through every single keyword as a regex
 				this.settings.keywords.every((keyword) => {
 					let regex = undefined; // the regex to run on the message content
-					let filter = undefined; 
+					let filter = undefined;
 					// retrieve the filter (user, channel, server) if there is any
 					//								 type		 id		 regex
 					let isFiltered = /^([@#]?)(\d+):(.*)$/g.exec(keyword);
@@ -293,7 +291,7 @@ module.exports = (Plugin, Library) => {
 			let div = document.createElement('div');
 			label.append(input);
 			label.append(div);
-			input.addEventListener('input', function (e) { 
+			input.addEventListener('input', function (e) {
 				callback(this.checked);
 			});
 			return label;
@@ -326,21 +324,6 @@ module.exports = (Plugin, Library) => {
 			this.settings = Utilities.deepclone(PluginUtilities.loadSettings('KeywordTracker', defaultSettings));
 		}
 
-		// from ui_modals.js in bd plugin lib, rewriting to fix since broken as of 4/2/2024
-		showModal(title, children, options = {}) {
-			const {danger = false, confirmText = "Okay", cancelText = "Cancel", onConfirm = () => {}, onCancel = () => {}} = options;
-			return ModalActions.openModal(props => {
-					return React.createElement(Modules.ConfirmationModal, Object.assign({
-							header: title,
-							confirmButtonColor: danger ? ButtonData.ButtonColors.RED : ButtonData.ButtonColors.BRAND,
-							confirmText: confirmText,
-							cancelText: cancelText,
-							onConfirm: onConfirm,
-							onCancel: onCancel
-					}, props), children);
-			});
-		}
-
 		// build the inbox panel placed directly after the pinned messages button
 		buildInboxPanel() {
 			let pinned = document.querySelector('div[class^="toolbar" i] > div:first-child');
@@ -369,7 +352,7 @@ module.exports = (Plugin, Library) => {
 				const closeModal = () => {
 					Modules.ModalActions.closeModal(modalKey);
 				};
-				modalKey = this.showModal('Keyword Matches', this.renderInbox(closeModal), {
+				modalKey = BdApi.UI.showConfirmationModal('Keyword Matches', this.renderInbox(closeModal), {
 					confirmText: 'Close',
 					cancelText: 'Mark as Read',
 					onCancel: () => {
@@ -462,7 +445,7 @@ module.exports = (Plugin, Library) => {
 					root.textContent = 'No recent matches.';
 					root.setAttribute('style', 'line-height: 90px; text-align: center;	color: var(--text-normal);');
 				} else {
-					for(let msg of sortedMatches) {
+					for (let msg of sortedMatches) {
 						root.appendChild(matchEntry(msg));
 					}
 				}
@@ -481,11 +464,11 @@ module.exports = (Plugin, Library) => {
 		buildSettings() {
 			const { Textbox, SettingPanel, SettingGroup, Keybind, SettingField, /*Switch*/ } = Settings;
 			const guilds = Object.values(GuildStore.getGuilds())
-											.sort((a, b) => `${a.id}`.localeCompare(`${b.id}`))
-											.map(g => {
-												g.channels = Modules.GuildChannelsStore.getChannels(g.id).SELECTABLE.map(c => c.channel);
-												return g;
-											});
+				.sort((a, b) => `${a.id}`.localeCompare(`${b.id}`))
+				.map(g => {
+					g.channels = Modules.GuildChannelsStore.getChannels(g.id).SELECTABLE.map(c => c.channel);
+					return g;
+				});
 			const { parseHTML } = DOM;
 
 			// when the main guild switch is hit this event is fired, causing all channel switches to sync
@@ -504,7 +487,7 @@ module.exports = (Plugin, Library) => {
 			keywords.append(tip3);
 			let tip4 = new SettingField('', '1239871234:/\d+/i watches numbers from server id 1239871234 (Right click server -> Copy Server ID, requires developer mode)', null, document.createElement('div'));
 			keywords.append(tip4);
-			
+
 			// add keyword textbox
 			let textbox = document.createElement('textarea');
 			textbox.value = this.settings.keywords.join('\n');
@@ -582,7 +565,7 @@ module.exports = (Plugin, Library) => {
 				}
 				var guildSwitch = this.makeSwitch(this.settings.guilds[g.id].enabled, (v) => {
 					this.settings.guilds[g.id].enabled = v;
-					for(let cid in this.settings.guilds[g.id].channels) {
+					for (let cid in this.settings.guilds[g.id].channels) {
 						this.settings.guilds[g.id].channels[cid] = v;
 					}
 					guildGroup.getElement().dispatchEvent(GuildFlushEvent);
