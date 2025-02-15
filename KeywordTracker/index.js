@@ -32,10 +32,10 @@ module.exports = (Plugin, Library) => {
 		DOM,
 		ReactUtils,
 		React,
+		UI,
 	} = BdApi;
 
 	const NotificationModule = Webpack.getByKeys("showNotification");
-	const ModalActions = Webpack.getByKeys("openModal", "updateModal");
 	const ButtonData = Webpack.getByKeys("ButtonColors");
 	const GuildStore = Webpack.getStore("GuildStore");
 
@@ -134,6 +134,7 @@ module.exports = (Plugin, Library) => {
 				if (this.settings.guilds[channel.guild_id] == null) {
 					let g = guilds.find(g => g.id === channel.guild_id);
 					if (!g) return;
+					console.log(g.channels);
 					this.settings.guilds[g.id] = {
 						// set all channels to enabled by default
 						channels: g.channels
@@ -329,16 +330,17 @@ module.exports = (Plugin, Library) => {
 		// from ui_modals.js in bd plugin lib, rewriting to fix since broken as of 4/2/2024
 		showModal(title, children, options = {}) {
 			const {danger = false, confirmText = "Okay", cancelText = "Cancel", onConfirm = () => {}, onCancel = () => {}} = options;
-			return ModalActions.openModal(props => {
-					return React.createElement(Modules.ConfirmationModal, Object.assign({
-							header: title,
-							confirmButtonColor: danger ? ButtonData.ButtonColors.RED : ButtonData.ButtonColors.BRAND,
-							confirmText: confirmText,
-							cancelText: cancelText,
-							onConfirm: onConfirm,
-							onCancel: onCancel
-					}, props), children);
-			});
+			return UI.showConfirmationModal(
+				title,
+				children,
+				{
+					danger: danger,
+					confirmText: confirmText,
+					cancelText: cancelText,
+					onConfirm: onConfirm,
+					onCancel: onCancel
+				}
+			);
 		}
 
 		// build the inbox panel placed directly after the pinned messages button
@@ -367,7 +369,7 @@ module.exports = (Plugin, Library) => {
 			const openModal = () => {
 				var modalKey = undefined;
 				const closeModal = () => {
-					Modules.ModalActions.closeModal(modalKey);
+					document.querySelector('.bd-modal-footer button').click();
 				};
 				modalKey = this.showModal('Keyword Matches', this.renderInbox(closeModal), {
 					confirmText: 'Close',
