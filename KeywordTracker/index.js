@@ -414,7 +414,7 @@ module.exports = (Plugin, Library) => {
 					entry.className = 'kt-inbox-entry';
 					entry.innerHTML = `
 						<div class="kt-entry-row">
-							<img class="kt-usericon" src="https://cdn.discordapp.com/avatars/${msg.author.id}/${msg.author.avatar}.webp?size=24" />
+							<img class="kt-usericon" src="" />
 							<span class="kt-username"></span>
 							<span class="kt-timestamp">${new Date(msg.timestamp).toLocaleString()}</span>
 						</div>
@@ -430,9 +430,15 @@ module.exports = (Plugin, Library) => {
 							</div>
 						</div>
 					`;
-
+					entry.querySelector('.kt-usericon').src = msg.author.avatar !== null
+						? `https://cdn.discordapp.com/avatars/${msg.author.id}/${msg.author.avatar}.webp?size=24`
+						: `https://cdn.discordapp.com/embed/avatars/${(BigInt(msg.author.id) >> BigInt(22)) % BigInt(6)}.png`;
 					entry.querySelector('.kt-username').textContent = msg.author.username;
-					entry.querySelector('.kt-content').textContent = msg.content;
+					entry.querySelector('.kt-content').textContent = msg.content !== ""
+						? msg.content
+						: msg.embeds.length > 0
+							? msg.embeds[0].description
+							: "";
 					entry.querySelector('.kt-matched > code').textContent = msg._match;
 
 					let read_btn = entry.querySelector('.kt-read');
